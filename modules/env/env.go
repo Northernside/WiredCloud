@@ -40,6 +40,6 @@ func GetEnv(key string) string {
 		return value
 	}
 
-	log.Printf("Warning: Environment variable %s not found", key)
+	log.Printf("Warning: Environment variable %s not found\n", key)
 	return ""
 }

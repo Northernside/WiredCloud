@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"io/ioutil"
 	"net/http"
+	"os"
 	"regexp"
 	"strings"
 	"wiredcloud/modules/env"
@@ -12,7 +12,7 @@ var indexHTML string
 
 func Index(w http.ResponseWriter, r *http.Request) {
 	if indexHTML == "" {
-		file, err := ioutil.ReadFile("index.html")
+		file, err := os.ReadFile("index.html")
 		if err != nil {
 			http.Error(w, "Failed to read index.html", http.StatusInternalServerError)
 			return

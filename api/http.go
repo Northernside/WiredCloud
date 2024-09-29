@@ -13,7 +13,7 @@ func StartWebServer() {
 	if _, err := os.Stat("uploads"); os.IsNotExist(err) {
 		err := os.Mkdir("uploads", 0755)
 		if err != nil {
-			log.Fatalf("Failed to create uploads directory: %v", err)
+			log.Fatalf("Failed to create uploads directory: %v\n", err)
 		}
 	}
 
@@ -21,7 +21,7 @@ func StartWebServer() {
 	http.HandleFunc("/upload", enableCORS(routes.UploadFile))
 	http.HandleFunc("/download", enableCORS(routes.DownloadFile))
 
-	log.Printf("Starting REST API server on %s:%s", env.GetEnv("HOST"), env.GetEnv("PORT"))
+	log.Printf("Starting REST API server on %s:%s\n", env.GetEnv("HOST"), env.GetEnv("PORT"))
 	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%s", env.GetEnv("HOST"), env.GetEnv("PORT")), nil))
 }
 

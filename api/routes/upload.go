@@ -4,8 +4,9 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
+	"os"
 	"wiredcloud/modules/crypto"
 	"wiredcloud/modules/env"
 )
@@ -31,7 +32,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 	defer file.Close()
 
 	// reading
-	fileContent, err := ioutil.ReadAll(file)
+	fileContent, err := io.ReadAll(file)
 	if err != nil {
 		http.Error(w, "Failed to read file", http.StatusInternalServerError)
 		return
@@ -59,7 +60,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 
 	// saving
 	encryptedFileName := "uploads/" + randomFilename
-	err = ioutil.WriteFile(encryptedFileName, encryptedContent, 0644)
+	err = os.WriteFile(encryptedFileName, encryptedContent, 0644)
 	if err != nil {
 		http.Error(w, "Failed to save encrypted file", http.StatusInternalServerError)
 		return
