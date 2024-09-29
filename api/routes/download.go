@@ -2,9 +2,9 @@ package routes
 
 import (
 	"encoding/hex"
-	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"wiredcloud/modules/crypto"
 )
 
@@ -32,7 +32,7 @@ func DownloadFile(w http.ResponseWriter, r *http.Request) {
 
 	// reading
 	encryptedFileName := "uploads/" + filename
-	encryptedContent, err := ioutil.ReadFile(encryptedFileName)
+	encryptedContent, err := os.ReadFile(encryptedFileName)
 	if err != nil {
 		http.Error(w, "Failed to read encrypted file", http.StatusNotFound)
 		return

@@ -11,11 +11,7 @@ import (
 func GenerateEncryptionKey() ([]byte, error) {
 	key := make([]byte, 32) // 32 byte key
 	_, err := rand.Read(key)
-	if err != nil {
-		return nil, err
-	}
-
-	return key, nil
+	return key, err
 }
 
 func EncryptFile(content []byte, key []byte, mimeType string) ([]byte, error) {
