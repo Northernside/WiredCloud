@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload</title>
+    <style>
+        body {
+            background-color: #030303;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+
+        .upload-container {
+            text-align: center;
+            user-select: none;
+            width: 300px;
+            margin: 0 auto;
+            padding: 10px 20px;
+            background-color: #080808;
+            border: 1px solid #151515;
+            border-radius: 5px;
+
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .progress-container {
+            width: 300px;
+            background-color: #202020;
+            border-radius: 3px;
+            margin-top: 10px;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 20px;
+            background-color: #4caf50;
+            border-radius: 5px;
+        }
+
+        .message {
+            margin-top: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="upload-container">
+        <h2>Upload a File</h2>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <input type="file" id="fileInput" name="file" required>
+            <button type="submit">Upload</button>
+        </form>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="message" id="message"></div>
+        <div class="stats" id="stats"></div>
+    </div>
+
+    <script>
+        const SERVICE_URL = "{{ .Env.SERVICE_URL }}";
+
+        const form = document.getElementById("uploadForm");
+        const messageDiv = document.getElementById("message");
+        const progressBar = document.getElementById("progressBar");
+        const statsDiv = document.getElementById("stats");
+        statsDiv.style.marginTop = "10px";
+
+        form.addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const formData = new FormData();
+            const fileInput = document.getElementById("fileInput");
+            formData.append("file", fileInput.files[0]);
+
+            const startTime = Date.now();
+            const xhr = new XMLHttpRequest();
+
+            xhr.open("POST", `${SERVICE_URL}/upload`, true);
+
+            xhr.upload.onprogress = function(event) {
+                if (event.lengthComputable) {
+                    const percentComplete = (event.loaded / event.total) * 100;
+                    progressBar.style.width = percentComplete + "%";
+
+                    const elapsedTime = (Date.now() - startTime) / 1000;
+                    const speed = event.loaded / elapsedTime;
+                    statsDiv.textContent = `Speed: ${speedToNearestUnit(speed)} | ETA: ${(etaToNearestUnit(event.total - event.loaded, speed))}`;
+                }
+            };
+
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const data = JSON.parse(xhr.responseText);
+                    if (data.link) {
+                        messageDiv.innerHTML = `File uploaded successfully.<br><a href="${data.link}" target="_blank">Shareable Link</a>`;
+                    } else {
+                        messageDiv.textContent = `File upload failed: ${data.message}`;
+                    }
+                } else {
+                    messageDiv.textContent = "File upload failed: Server Error.";
+                }
+            };
+
+            xhr.onerror = function() {
+                console.error("Error:", xhr.statusText);
+                messageDiv.textContent = "An error occurred during the upload.";
+            };
+
+            xhr.send(formData);
+        });
+
+        function speedToNearestUnit(speed) {
+            if (speed < 1024) {
+                return `${speed.toFixed(2)} B/s`;
+            } else if (speed < 1024 * 1024) {
+                return `${(speed / 1024).toFixed(2)} KB/s`;
+            } else {
+                return `${(speed / (1024 * 1024)).toFixed(2)} MB/s`;
+            }
+        }
+
+        function etaToNearestUnit(remainingBytes, speed) {
+            const remainingTime = remainingBytes / speed;
+            if (remainingTime < 60) {
+                return `${remainingTime.toFixed(2)} seconds`;
+            } else if (remainingTime < 3600) {
+                return `${(remainingTime / 60).toFixed(2)} minutes`;
+            } else if (remainingTime < 86400) {
+                return `${(remainingTime / 3600).toFixed(2)} hours`;
+            } else {
+                return `${(remainingTime / 86400).toFixed(2)} days`;
+            }
+        }
+    </script>
+
+</body>
+</html>
