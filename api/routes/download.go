@@ -36,13 +36,13 @@ func DownloadFile(w http.ResponseWriter, r *http.Request) {
 
 	// reading
 
-	sanitizedFilename, err := sanitizeFileName(filename)
+	sanitizedFilename, err := sanitizeFileName("uploads/" + filename)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	encryptedFileName := "uploads/" + sanitizedFilename
+	encryptedFileName := sanitizedFilename
 	encryptedContent, err := os.ReadFile(encryptedFileName)
 	if err != nil {
 		http.Error(w, "Failed to read encrypted file", http.StatusNotFound)
