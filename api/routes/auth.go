@@ -63,13 +63,13 @@ func Auth(w http.ResponseWriter, r *http.Request) {
 	// check if user is whitelisted
 	for _, id := range WhitelistedIds {
 		if id == user {
-			log.Printf("User %s is whitelisted\n", user)
+			// log.Printf("User %s is whitelisted\n", user)
 			w.Header().Add("Set-Cookie", "token="+token+"; Path=/; Max-Age=604800")
 			http.Redirect(w, r, "/", http.StatusFound)
 
 			return
 		}
 
-		log.Printf("User %s is not whitelisted\n", user)
+		// log.Printf("User %s is not whitelisted\n", user)
 	}
 }

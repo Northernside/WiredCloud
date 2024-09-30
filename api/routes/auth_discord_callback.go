@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 
 	"wiredcloud/modules/env"
@@ -100,7 +99,7 @@ func AuthDiscordCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Printf("New sign-in: %s", dUser.ID)
+	// log.Printf("New sign-in: %s", dUser.ID)
 
 	_, err = sqlite.GetUser("discord_id", dUser.ID)
 	if err != nil {
