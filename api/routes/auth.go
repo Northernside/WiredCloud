@@ -27,6 +27,7 @@ func InitWhitelist() {
 
 	if err := scanner.Err(); err != nil {
 		log.Println("Failed to read whitelist file")
+		return
 	}
 
 	log.Printf("Whitelist initialized with %d ids\n", len(WhitelistedIds))

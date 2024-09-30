@@ -8,7 +8,10 @@ import (
 	"wiredcloud/modules/env"
 )
 
-var indexHTML string
+var (
+	indexHTML     string
+	EnvVarPattern = regexp.MustCompile(`{{\s?.Env\.([a-zA-Z0-9_]+)\s?}}`)
+)
 
 func Index(w http.ResponseWriter, r *http.Request) {
 	if indexHTML == "" {
@@ -28,10 +31,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 }
 
 func replaceEnvVars(content string) string {
-	var regex = regexp.MustCompile(`{{\s?.Env\.([a-zA-Z0-9_]+)\s?}}`)
-	matches := regex.FindAllStringSubmatch(content, -1)
-
-	for _, match := range matches {
+	for _, match := range EnvVarPattern.FindAllStringSubmatch(content, -1) {
 		content = strings.ReplaceAll(content, match[0], env.GetEnv(match[1]))
 	}
 
