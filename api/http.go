@@ -21,7 +21,9 @@ func StartWebServer() {
 
 	userHandler("/", routes.Index, http.MethodGet)
 	userHandler("/upload", routes.UploadFile, http.MethodPost)
-	userHandler("/download", routes.DownloadFile, http.MethodGet)
+
+	http.HandleFunc("/download", enableCORS(routes.DownloadFile))
+
 	http.HandleFunc("/auth", enableCORS(routes.Auth))
 	http.HandleFunc("/api/auth/discord", enableCORS(routes.AuthDiscord))
 	http.HandleFunc("/api/auth/discord/callback", enableCORS(routes.AuthDiscordCallback))
