@@ -3,8 +3,10 @@ package main
 import (
 	"runtime"
 	"time"
+
 	"wiredcloud/api"
 	"wiredcloud/modules/env"
+	"wiredcloud/modules/sqlite"
 )
 
 func main() {
@@ -17,5 +19,6 @@ func main() {
 		}
 	}()
 
+	sqlite.Init()
 	api.StartWebServer()
 }

@@ -5,15 +5,11 @@ import (
 	"log"
 	"net/http"
 	"os"
+
 	"wiredcloud/modules/crypto"
 )
 
 func DownloadFile(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-		return
-	}
-
 	// filename and key query params
 	filename := r.URL.Query().Get("filename")
 	keyHex := r.URL.Query().Get("key")

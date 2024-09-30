@@ -12,11 +12,6 @@ import (
 )
 
 func UploadFile(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-		return
-	}
-
 	// multipart form (max. 15GB)
 	err := r.ParseMultipartForm(15 << 30)
 	if err != nil {
