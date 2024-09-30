@@ -2,9 +2,12 @@ package routes
 
 import (
 	"encoding/hex"
+	"errors"
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"wiredcloud/modules/crypto"
 )
@@ -32,7 +35,14 @@ func DownloadFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// reading
-	encryptedFileName := "uploads/" + filename
+
+	sanitizedFilename, err := sanitizeFileName(filename)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	encryptedFileName := "uploads/" + sanitizedFilename
 	encryptedContent, err := os.ReadFile(encryptedFileName)
 	if err != nil {
 		http.Error(w, "Failed to read encrypted file", http.StatusNotFound)
@@ -52,4 +62,18 @@ func DownloadFile(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 	w.Write(decryptedContent)
+}
+
+func sanitizeFileName(filename string) (string, error) {
+	cleanedFileName := filepath.Clean(filename)
+
+	if strings.Contains(cleanedFileName, "..") {
+		return "", errors.New("invalid file name: path traversal detected")
+	}
+
+	if !strings.HasPrefix(cleanedFileName, "uploads/") {
+		return "", errors.New("invalid file name: outside of allowed directory")
+	}
+
+	return cleanedFileName, nil
 }
