@@ -74,7 +74,7 @@ func sanitizeFileName(filename string) (string, error) {
 		return "", errors.New("invalid file name: path traversal detected")
 	}
 
-	log.Printf("cleanedFileName: %s", cleanedFileName)
+	// log.Printf("cleanedFileName: %s", cleanedFileName)
 
 	if !strings.HasPrefix(cleanedFileName, "uploads/") && !strings.HasPrefix(cleanedFileName, "uploads\\") {
 		return "", errors.New("invalid file name: outside of allowed directory")
