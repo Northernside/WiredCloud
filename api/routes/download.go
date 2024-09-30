@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"wiredcloud/modules/crypto"
@@ -35,7 +36,6 @@ func DownloadFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// reading
-
 	sanitizedFilename, err := sanitizeFileName("uploads/" + filename)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -57,7 +57,10 @@ func DownloadFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// display filename and filesize
+
 	w.Header().Set("Content-Disposition", "attachment; filename="+filename)
+	w.Header().Set("Content-Length", strconv.Itoa(len(decryptedContent)))
 	w.Header().Set("Content-Type", mimeType)
 	w.WriteHeader(http.StatusOK)
 
@@ -71,7 +74,9 @@ func sanitizeFileName(filename string) (string, error) {
 		return "", errors.New("invalid file name: path traversal detected")
 	}
 
-	if !strings.HasPrefix(cleanedFileName, "uploads/") {
+	log.Printf("cleanedFileName: %s", cleanedFileName)
+
+	if !strings.HasPrefix(cleanedFileName, "uploads/") && !strings.HasPrefix(cleanedFileName, "uploads\\") {
 		return "", errors.New("invalid file name: outside of allowed directory")
 	}
 
