@@ -28,6 +28,12 @@ func DownloadFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// validate filename
+	if len(strings.Split(filename, "_wc_")) != 2 {
+		http.Error(w, "Invalid filename", http.StatusBadRequest)
+		return
+	}
+
 	// -> back to bytes
 	key, err := hex.DecodeString(keyHex)
 	if err != nil || len(key) != 32 {
