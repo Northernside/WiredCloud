@@ -36,7 +36,7 @@ func DownloadFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// reading
-	sanitizedFilename, err := sanitizeFileName("uploads/" + filename)
+	sanitizedFilename, err := sanitizeFileName("uploads/" + strings.Split(filename, "_wc_")[0])
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -59,7 +59,7 @@ func DownloadFile(w http.ResponseWriter, r *http.Request) {
 
 	// display filename and filesize
 
-	w.Header().Set("Content-Disposition", "attachment; filename="+filename)
+	w.Header().Set("Content-Disposition", "attachment; filename="+strings.Split(filename, "_wc_")[0])
 	w.Header().Set("Content-Length", strconv.Itoa(len(decryptedContent)))
 	w.Header().Set("Content-Type", mimeType)
 	w.WriteHeader(http.StatusOK)

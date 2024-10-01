@@ -55,7 +55,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// saving
-	encryptedFileName := "uploads/" + randomFilename + "_" + originalFilename
+	encryptedFileName := "uploads/" + randomFilename
 	err = os.WriteFile(encryptedFileName, encryptedContent, 0644)
 	if err != nil {
 		http.Error(w, "Failed to save encrypted file", http.StatusInternalServerError)
@@ -65,7 +65,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 	// readable encryption key
 	keyHex := hex.EncodeToString(encryptionKey)
 
-	shareableLink := fmt.Sprintf("%s/download?filename=%s&key=%s", env.GetEnv("SERVICE_URL"), randomFilename+"_"+originalFilename, keyHex)
+	shareableLink := fmt.Sprintf("%s/download?filename=%s&key=%s", env.GetEnv("SERVICE_URL"), randomFilename+"_wc_"+originalFilename, keyHex)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
