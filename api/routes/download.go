@@ -36,7 +36,7 @@ func DownloadFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// reading
-	sanitizedFilename, err := sanitizeFileName("uploads/" + strings.Split(filename, "_wc_")[0])
+	sanitizedFilename, err := sanitizeFileName("uploads/" + filename)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
