@@ -50,7 +50,7 @@ func DownloadFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// decrypting
-	decryptedContent, mimeType, err := crypto.DecryptFile(encryptedContent, key)
+	decryptedContent, metaFileName, mimeType, err := crypto.DecryptFile(encryptedContent, key)
 	if err != nil {
 		log.Printf("Failed to decrypt file: %v", err)
 		http.Error(w, "Failed to decrypt file", http.StatusInternalServerError)
@@ -59,7 +59,7 @@ func DownloadFile(w http.ResponseWriter, r *http.Request) {
 
 	// display filename and filesize
 
-	w.Header().Set("Content-Disposition", "attachment; filename="+strings.Split(filename, "_wc_")[1])
+	w.Header().Set("Content-Disposition", "attachment; filename="+metaFileName)
 	w.Header().Set("Content-Length", strconv.Itoa(len(decryptedContent)))
 	w.Header().Set("Content-Type", mimeType)
 	w.WriteHeader(http.StatusOK)
